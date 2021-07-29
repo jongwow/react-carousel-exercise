@@ -81,15 +81,17 @@ function GameVideoContainer() {
 }
 
 function App() {
-  const handleResize = () => {
-    console.log(`브라우저 화면 사이즈 x: ${window.innerWidth}, y: ${window.innerHeight}`);
-  }
-  
   useEffect(() => {
-    window.addEventListener('resize', handleResize);
-    return () => { // cleanup 
-      window.removeEventListener('resize', handleResize);
-    }
+    let dd = throttle(() => {
+      console.log(
+        `브라우저 화면 사이즈 x: ${window.innerWidth}, y: ${window.innerHeight}`
+      );
+    }, 500);
+    window.addEventListener("resize", dd);
+    return () => {
+      // cleanup
+      window.removeEventListener("resize", dd);
+    };
   }, []);
 
   return (
@@ -111,3 +113,15 @@ function App() {
 }
 
 export default App;
+
+function throttle(fn, delay) {
+  let st;
+  return function (...args) {
+    if (!st) {
+      st = setTimeout(() => {
+        st = null;
+        fn.apply(this, args);
+      }, delay);
+    }
+  };
+}
