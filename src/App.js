@@ -4,9 +4,8 @@ import LeftColumn from "./LeftColumn";
 import { useEffect, useRef, useState } from "react";
 import GameVideoContainer from "./GameVideoContainer";
 
-
 function App() {
-  const cameraContainerMaxWidth = useRef(0);
+  const innerWidth = useRef(0);
 
   const [allPlayer, setAllPlayer] = useState({
     playerToDist: { randomString: 1 },
@@ -21,14 +20,22 @@ function App() {
 
   useEffect(() => {
     let newActivePlayer = { playerToDist: {} };
+    let length = Object.keys(allPlayer.playerToDist).length; //TODO: Rename it
+    // let st = activeIndex.start + cameraViewNumber < length ? length - cameraViewNumber : 0;
+    let st =
+      activeIndex.start + cameraViewNumber > length
+        ? length - cameraViewNumber < 0
+          ? 0
+          : length - cameraViewNumber
+        : activeIndex.start;
+    let en = st + cameraViewNumber;
     Object.keys(allPlayer.playerToDist)
-      .slice(activeIndex.start, activeIndex.start + cameraViewNumber)
+      .slice(st, en)
       .forEach((playerId) => {
         newActivePlayer.playerToDist[playerId] =
           allPlayer.playerToDist[playerId];
       });
-    let newIsOver =
-      cameraViewNumber < Object.keys(allPlayer.playerToDist).length;
+    let newIsOver = cameraViewNumber < length;
     setIsOver(newIsOver);
     setActivePlayer(newActivePlayer);
   }, [allPlayer, cameraViewNumber, activeIndex]);
@@ -36,23 +43,27 @@ function App() {
   const addActiveIndex = () => {
     // top을 넘어가면 안됨
     let top = Object.keys(allPlayer.playerToDist).length - cameraViewNumber;
-    setActiveIndex((prev) => ({ ...prev, start: prev.start < top  ? prev.start + 1 : prev.start}));
+    setActiveIndex((prev) => ({
+      ...prev,
+      start: prev.start < top ? prev.start + 1 : prev.start,
+    }));
   };
 
   const subActiveIndex = () => {
     // bottom을 넘어가면 안됨.
-    setActiveIndex((prev) => ({ ...prev, start: prev.start > 0 ? prev.start - 1: prev.start }));
+    setActiveIndex((prev) => ({
+      ...prev,
+      start: prev.start > 0 ? prev.start - 1 : prev.start,
+    }));
   };
 
   useEffect(() => {
     let dd = throttle(() => {
-      cameraContainerMaxWidth.current = window.innerWidth - 390;
-      let currentCameraViewNumber = getCameraViewNumber(
-        cameraContainerMaxWidth.current
-      );
+      innerWidth.current = window.innerWidth - 390;
+      let currentCameraViewNumber = getCameraViewNumber(innerWidth.current);
       setCameraViewNumber(currentCameraViewNumber);
       console.log(
-        `브라우저 화면 사이즈 x: ${window.innerWidth}, y: ${window.innerHeight}. InnerWidth: ${cameraContainerMaxWidth.current}, CameraView: ${currentCameraViewNumber}`
+        `브라우저 화면 사이즈 x: ${window.innerWidth}, y: ${window.innerHeight}. InnerWidth: ${innerWidth.current}, CameraView: ${currentCameraViewNumber}`
       );
     }, 500);
     window.addEventListener("resize", dd);
