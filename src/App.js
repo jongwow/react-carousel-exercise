@@ -41,13 +41,14 @@ function MyVideoContainer() {
   );
 }
 function OtherVideoContainer(props) {
-  const { activePlayer, cameraViewNumber } = props;
+  const {
+    activePlayer,
+    cameraViewNumber,
+    isOver,
+    addActiveIndex,
+    subActiveIndex,
+  } = props;
   let activePlayerList = Object.keys(activePlayer.playerToDist);
-  let isOver = activePlayerList.length > cameraViewNumber;
-  if (isOver) {
-    console.log(`${activePlayerList.length} > ${cameraViewNumber}`);
-    // alert("넘친다");
-  }
   return (
     <div
       id="video-container"
@@ -68,7 +69,7 @@ function OtherVideoContainer(props) {
           justifyContent: "center",
         }}
       >
-        <CarouselLeft/>
+        {isOver && <CarouselLeft onClick={subActiveIndex}/>}
         {activePlayerList.map((playerId, idx) => (
           <VideoBox
             key={playerId}
@@ -78,17 +79,26 @@ function OtherVideoContainer(props) {
             }
           />
         ))}
-        <CarouselRight/>
+        {isOver && <CarouselRight onClick={addActiveIndex}/>}
       </div>
     </div>
   );
 }
 
-function GameVideoContainer({ activePlayer, cameraViewNumber }) {
+function GameVideoContainer({
+  activePlayer,
+  cameraViewNumber,
+  isOver,
+  addActiveIndex,
+  subActiveIndex,
+}) {
   return (
     <>
       <OtherVideoContainer
         activePlayer={activePlayer}
+        isOver={isOver}
+        addActiveIndex={addActiveIndex}
+        subActiveIndex={subActiveIndex}
         cameraViewNumber={cameraViewNumber}
       />
       <MyVideoContainer />
@@ -99,14 +109,15 @@ function GameVideoContainer({ activePlayer, cameraViewNumber }) {
 function App() {
   const cameraContainerMaxWidth = useRef(0);
 
-  const [playerInfoMap, setPlayerInfoMap] = useState({
-    playerToDist: { randomString: 1 },
-  });
+  // const [playerInfoMap, setPlayerInfoMap] = useState({
+  // playerToDist: { randomString: 1 },
+  // });
   const [allPlayer, setAllPlayer] = useState({
     playerToDist: { randomString: 1 },
   });
-  const [activeIndex, setActiveIndex] = useState({start: 0, end: 0}); //항상 옳?
-  const [possiblePlayer, setPossiblePlayer] = useState({});
+  const [activeIndex, setActiveIndex] = useState({ start: 0 }); //항상 옳?
+  const [isOver, setIsOver] = useState(false);
+  // const [possiblePlayer, setPossiblePlayer] = useState({});
   const [activePlayer, setActivePlayer] = useState({
     playerToDist: { randomString: 1 },
   });
@@ -114,26 +125,37 @@ function App() {
 
   useEffect(() => {
     // 만약 cameraViewNumber보다 allPlayer가 작거나 같다면 그냥 넣기
-    // 그렇지 않다면 
+    // 그렇지 않다면
     // - 처음 넘어간거면 앞에서부터 잘라서 넣는다?
     // - 이미 넘어간가면 st - end?
-    
+
     // 만약 all = 10, st = 0, end = 7인데
     // 버튼을 눌러서 st=1, end=8로 옮겼다고생각해보자.
     // 그러면 그 상태에서 all + 1이 발동되면?
     // s=1,e=8 유지하지.
-    let newActiveIndex = {start: activeIndex.start, end: max(activeIndex.end, cameraViewNumber)};
-
-    let newActivePlayer = {playerToDist: {}};
+    let newActivePlayer = { playerToDist: {} };
     Object.keys(allPlayer.playerToDist)
-      .slice(newActiveIndex.start, newActiveIndex.end)
+      .slice(activeIndex.start, activeIndex.start + cameraViewNumber)
       .forEach((playerId) => {
-        newActivePlayer.playerToDist[playerId] = allPlayer.playerToDist[playerId]
-      });  
-
-    setActiveIndex(newActiveIndex);
+        newActivePlayer.playerToDist[playerId] =
+          allPlayer.playerToDist[playerId];
+      });
+    let newIsOver =
+      cameraViewNumber < Object.keys(allPlayer.playerToDist).length;
+    setIsOver(newIsOver);
     setActivePlayer(newActivePlayer);
-  }, [allPlayer]);
+  }, [allPlayer, cameraViewNumber, activeIndex]);
+
+  const addActiveIndex = () => {
+    // top을 넘어가면 안됨
+    let top = Object.keys(allPlayer.playerToDist).length - cameraViewNumber;
+    setActiveIndex((prev) => ({ ...prev, start: prev.start < top  ? prev.start + 1 : prev.start}));
+  };
+
+  const subActiveIndex = () => {
+    // bottom을 넘어가면 안됨.
+    setActiveIndex((prev) => ({ ...prev, start: prev.start > 0 ? prev.start - 1: prev.start }));
+  };
 
   useEffect(() => {
     let dd = throttle(() => {
@@ -165,9 +187,22 @@ function App() {
       >
         <LeftColumn />
         <RightColumn setAllPlayer={setAllPlayer} allPlayer={allPlayer} />
+
+        {Object.keys(allPlayer.playerToDist).map((playerId) => (
+          <span key={playerId}>[{playerId}]</span>
+        ))}
+        <br />
+        {Object.keys(activePlayer.playerToDist).map((playerId) => (
+          <span key={`act-${playerId}`}>[{playerId}]</span>
+        ))}
+        <br />
+        <span>{JSON.stringify(activeIndex)}</span>
       </div>
       <GameVideoContainer
         activePlayer={activePlayer}
+        isOver={isOver}
+        addActiveIndex={addActiveIndex}
+        subActiveIndex={subActiveIndex}
         cameraViewNumber={cameraViewNumber}
       />
     </div>
@@ -216,10 +251,9 @@ function getCameraViewNumber(containerWidth) {
   return 1;
 }
 
-
-function max(a, b){
-  return a > b ? a : b;
-}
-function min(a, b){
-  return a > b ? b: a;
-}
+// function max(a, b){
+//   return a > b ? a : b;
+// }
+// function min(a, b){
+//   return a > b ? b: a;
+// }

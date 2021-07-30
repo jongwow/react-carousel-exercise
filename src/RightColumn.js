@@ -12,9 +12,6 @@ export default function RightColumn({ setAllPlayer }) {
     })
     latestId.current = id;
   };
-  const onClickAddPossible = () => {
-    
-  }
   return (
     <div
       style={{
