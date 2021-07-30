@@ -2,7 +2,7 @@ import { useRef } from "react";
 import {randomString} from "./randomId";
 
 export default function RightColumn({ setAllPlayer }) {
-  const latestId = useRef('');
+  const latestId = useRef(['randomString1']);
   const onClickCreate = () => {
     let id = randomString();
     setAllPlayer((prev) => {
@@ -10,8 +10,18 @@ export default function RightColumn({ setAllPlayer }) {
       newPlayers.playerToDist[id] = 1;
       return newPlayers;
     })
-    latestId.current = id;
+    latestId.current.push(id);
   };
+
+  const onClickRemove = () => {
+    let id = latestId.current.pop();
+    setAllPlayer((prev) => {
+      let newPlayers = Object.assign({}, prev);
+      delete newPlayers.playerToDist[id];
+      return newPlayers;
+    });
+  }
+
   return (
     <div
       style={{
@@ -28,6 +38,7 @@ export default function RightColumn({ setAllPlayer }) {
     >
       Right Column
       <button onClick={onClickCreate}>createPlayer</button>
+      <button onClick={onClickRemove}>removePlayer</button>
     </div>
   );
 }
