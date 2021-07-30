@@ -3,12 +3,16 @@ import RightColumn from "./RightColumn";
 import LeftColumn from "./LeftColumn";
 import { useEffect, useRef, useState } from "react";
 import { CarouselRight, CarouselLeft } from "./carousel";
+import { randomColor } from "./randomId";
 
 function VideoBox({ text, style }) {
+  let color = randomColor(text[0]);
+  console.log(color)
   return (
     <div
       style={{
-        backgroundColor: "green",
+        // backgroundColor: `#${text.substring(0, 6)}`,
+        backgroundColor: color,
         width: "180px",
         height: "120px",
         borderRadius: `20px`,
@@ -109,9 +113,6 @@ function GameVideoContainer({
 function App() {
   const cameraContainerMaxWidth = useRef(0);
 
-  // const [playerInfoMap, setPlayerInfoMap] = useState({
-  // playerToDist: { randomString: 1 },
-  // });
   const [allPlayer, setAllPlayer] = useState({
     playerToDist: { randomString: 1 },
   });
@@ -124,15 +125,6 @@ function App() {
   const [cameraViewNumber, setCameraViewNumber] = useState(5);
 
   useEffect(() => {
-    // 만약 cameraViewNumber보다 allPlayer가 작거나 같다면 그냥 넣기
-    // 그렇지 않다면
-    // - 처음 넘어간거면 앞에서부터 잘라서 넣는다?
-    // - 이미 넘어간가면 st - end?
-
-    // 만약 all = 10, st = 0, end = 7인데
-    // 버튼을 눌러서 st=1, end=8로 옮겼다고생각해보자.
-    // 그러면 그 상태에서 all + 1이 발동되면?
-    // s=1,e=8 유지하지.
     let newActivePlayer = { playerToDist: {} };
     Object.keys(allPlayer.playerToDist)
       .slice(activeIndex.start, activeIndex.start + cameraViewNumber)
@@ -250,10 +242,3 @@ function getCameraViewNumber(containerWidth) {
   }
   return 1;
 }
-
-// function max(a, b){
-//   return a > b ? a : b;
-// }
-// function min(a, b){
-//   return a > b ? b: a;
-// }

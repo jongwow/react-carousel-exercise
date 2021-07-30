@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import randomString from "./randomId";
+import {randomString} from "./randomId";
 
 export default function RightColumn({ setAllPlayer }) {
   const latestId = useRef('');
