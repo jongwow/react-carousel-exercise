@@ -12,7 +12,6 @@ function App() {
   });
   const [activeIndex, setActiveIndex] = useState({ start: 0 }); //항상 옳?
   const [isOver, setIsOver] = useState(false);
-  // const [possiblePlayer, setPossiblePlayer] = useState({});
   const [activePlayer, setActivePlayer] = useState({
     playerToDist: { randomString: 1 },
   });
@@ -20,22 +19,22 @@ function App() {
 
   useEffect(() => {
     let newActivePlayer = { playerToDist: {} };
-    let length = Object.keys(allPlayer.playerToDist).length; //TODO: Rename it
-    // let st = activeIndex.start + cameraViewNumber < length ? length - cameraViewNumber : 0;
-    let st =
-      activeIndex.start + cameraViewNumber > length
-        ? length - cameraViewNumber < 0
-          ? 0
-          : length - cameraViewNumber
-        : activeIndex.start;
+    let allPlayersLength = Object.keys(allPlayer.playerToDist).length; //TODO: Rename it
+
+    let st = getBottomIndex(
+      activeIndex.start,
+      cameraViewNumber,
+      allPlayersLength
+    );
     let en = st + cameraViewNumber;
+
     Object.keys(allPlayer.playerToDist)
       .slice(st, en)
       .forEach((playerId) => {
         newActivePlayer.playerToDist[playerId] =
           allPlayer.playerToDist[playerId];
       });
-    let newIsOver = cameraViewNumber < length;
+    let newIsOver = cameraViewNumber < allPlayersLength;
     setIsOver(newIsOver);
     setActivePlayer(newActivePlayer);
   }, [allPlayer, cameraViewNumber, activeIndex]);
@@ -86,6 +85,7 @@ function App() {
         <LeftColumn />
         <RightColumn setAllPlayer={setAllPlayer} allPlayer={allPlayer} />
 
+        {/* For debugging ====== start ====== */}
         {Object.keys(allPlayer.playerToDist).map((playerId) => (
           <span key={playerId}>[{playerId}]</span>
         ))}
@@ -95,6 +95,7 @@ function App() {
         ))}
         <br />
         <span>{JSON.stringify(activeIndex)}</span>
+        {/* For debugging ====== end ====== */}
       </div>
       <GameVideoContainer
         activePlayer={activePlayer}
@@ -147,4 +148,13 @@ function getCameraViewNumber(containerWidth) {
     return 2;
   }
   return 1;
+}
+
+function getBottomIndex(start, width, top) {
+  if (start + width > top) {
+    if (top - width < 0) return 0;
+    else return top - width;
+  } else {
+    return start;
+  }
 }
