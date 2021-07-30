@@ -1,7 +1,8 @@
 import "./App.css";
 import RightColumn from "./RightColumn";
 import LeftColumn from "./LeftColumn";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { CarouselRight, CarouselLeft } from "./carousel";
 
 function VideoBox({ text, style }) {
   return (
@@ -11,7 +12,6 @@ function VideoBox({ text, style }) {
         width: "180px",
         height: "120px",
         borderRadius: `20px`,
-        float: "left",
         ...style,
       }}
     >
@@ -40,8 +40,14 @@ function MyVideoContainer() {
     </div>
   );
 }
-function OtherVideoContainer() {
-  const contents = [{ text: "first" }, { text: "Second" }, { text: "Third" }];
+function OtherVideoContainer(props) {
+  const { activePlayer, cameraViewNumber } = props;
+  let activePlayerList = Object.keys(activePlayer.playerToDist);
+  let isOver = activePlayerList.length > cameraViewNumber;
+  if (isOver) {
+    console.log(`${activePlayerList.length} > ${cameraViewNumber}`);
+    // alert("넘친다");
+  }
   return (
     <div
       id="video-container"
@@ -50,41 +56,94 @@ function OtherVideoContainer() {
         top: `50px`,
         left: `50%`,
         transform: `translateX(-50%)`,
+        height: "130px",
+        width: `${cameraViewNumber * 196 + 80}px`,
+        backgroundColor: "yellow",
       }}
     >
       <div
         id="other-video-wrapper"
         style={{
-          textAlign: "center",
-          display: "block",
+          display: "flex",
+          justifyContent: "center",
         }}
       >
-        {contents.map((content, idx) => (
+        <CarouselLeft/>
+        {activePlayerList.map((playerId, idx) => (
           <VideoBox
-            key={idx}
-            text={content.text}
-            style={idx !== contents.length - 1 ? { marginRight: "16px" } : {}}
+            key={playerId}
+            text={`${playerId}:${activePlayer.playerToDist[playerId]}`}
+            style={
+              idx !== activePlayerList.length - 1 ? { marginRight: "16px" } : {}
+            }
           />
         ))}
+        <CarouselRight/>
       </div>
     </div>
   );
 }
 
-function GameVideoContainer() {
+function GameVideoContainer({ activePlayer, cameraViewNumber }) {
   return (
     <>
-      <OtherVideoContainer />
+      <OtherVideoContainer
+        activePlayer={activePlayer}
+        cameraViewNumber={cameraViewNumber}
+      />
       <MyVideoContainer />
     </>
   );
 }
 
 function App() {
+  const cameraContainerMaxWidth = useRef(0);
+
+  const [playerInfoMap, setPlayerInfoMap] = useState({
+    playerToDist: { randomString: 1 },
+  });
+  const [allPlayer, setAllPlayer] = useState({
+    playerToDist: { randomString: 1 },
+  });
+  const [activeIndex, setActiveIndex] = useState({start: 0, end: 0}); //항상 옳?
+  const [possiblePlayer, setPossiblePlayer] = useState({});
+  const [activePlayer, setActivePlayer] = useState({
+    playerToDist: { randomString: 1 },
+  });
+  const [cameraViewNumber, setCameraViewNumber] = useState(5);
+
+  useEffect(() => {
+    // 만약 cameraViewNumber보다 allPlayer가 작거나 같다면 그냥 넣기
+    // 그렇지 않다면 
+    // - 처음 넘어간거면 앞에서부터 잘라서 넣는다?
+    // - 이미 넘어간가면 st - end?
+    
+    // 만약 all = 10, st = 0, end = 7인데
+    // 버튼을 눌러서 st=1, end=8로 옮겼다고생각해보자.
+    // 그러면 그 상태에서 all + 1이 발동되면?
+    // s=1,e=8 유지하지.
+    let newActiveIndex = {start: activeIndex.start, end: max(activeIndex.end, cameraViewNumber)};
+
+    let newActivePlayer = {playerToDist: {}};
+    Object.keys(allPlayer.playerToDist)
+      .slice(newActiveIndex.start, newActiveIndex.end)
+      .forEach((playerId) => {
+        newActivePlayer.playerToDist[playerId] = allPlayer.playerToDist[playerId]
+      });  
+
+    setActiveIndex(newActiveIndex);
+    setActivePlayer(newActivePlayer);
+  }, [allPlayer]);
+
   useEffect(() => {
     let dd = throttle(() => {
+      cameraContainerMaxWidth.current = window.innerWidth - 390;
+      let currentCameraViewNumber = getCameraViewNumber(
+        cameraContainerMaxWidth.current
+      );
+      setCameraViewNumber(currentCameraViewNumber);
       console.log(
-        `브라우저 화면 사이즈 x: ${window.innerWidth}, y: ${window.innerHeight}`
+        `브라우저 화면 사이즈 x: ${window.innerWidth}, y: ${window.innerHeight}. InnerWidth: ${cameraContainerMaxWidth.current}, CameraView: ${currentCameraViewNumber}`
       );
     }, 500);
     window.addEventListener("resize", dd);
@@ -105,9 +164,12 @@ function App() {
         }}
       >
         <LeftColumn />
-        <RightColumn />
+        <RightColumn setAllPlayer={setAllPlayer} allPlayer={allPlayer} />
       </div>
-      <GameVideoContainer />
+      <GameVideoContainer
+        activePlayer={activePlayer}
+        cameraViewNumber={cameraViewNumber}
+      />
     </div>
   );
 }
@@ -124,4 +186,40 @@ function throttle(fn, delay) {
       }, delay);
     }
   };
+}
+
+/**
+ * 현재 cameraContainerWidth를 이용해서 최대 보여질 수 있는 영상 개수를 반환
+ *
+ * @param {number} containerWidth 카메라 영역 너비. 가변
+ * @returns {number} cameraViewNumber 보이는 최대 영상 숫자.
+ */
+function getCameraViewNumber(containerWidth) {
+  if (containerWidth >= 1572) {
+    return 7;
+  }
+  if (containerWidth >= 1376) {
+    return 6;
+  }
+  if (containerWidth >= 1180) {
+    return 5;
+  }
+  if (containerWidth >= 984) {
+    return 4;
+  }
+  if (containerWidth >= 788) {
+    return 3;
+  }
+  if (containerWidth >= 592) {
+    return 2;
+  }
+  return 1;
+}
+
+
+function max(a, b){
+  return a > b ? a : b;
+}
+function min(a, b){
+  return a > b ? b: a;
 }
