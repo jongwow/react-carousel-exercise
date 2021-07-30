@@ -15,8 +15,6 @@ let colour = [
   '#3D09A3',
 ];
 export function randomColor(ch) {
-  console.log('randomColour: ', ch);
   let i = ch.charCodeAt(0) % colour.length;
-  console.log('randomColour: i is', i);
   return colour[i];
 }

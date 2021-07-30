@@ -7,7 +7,6 @@ import { randomColor } from "./randomId";
 
 function VideoBox({ text, style }) {
   let color = randomColor(text[0]);
-  console.log(color)
   return (
     <div
       style={{
