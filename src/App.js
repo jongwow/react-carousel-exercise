@@ -65,7 +65,7 @@ function App() {
       console.log(
         `브라우저 화면 사이즈 x: ${window.innerWidth}, y: ${window.innerHeight}. InnerWidth: ${innerWidth.current}, CameraView: ${currentCameraViewNumber}`
       );
-    }, 500);
+    }, 300);
     window.addEventListener("resize", dd);
     return () => {
       // cleanup
