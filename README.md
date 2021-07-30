@@ -6,7 +6,7 @@
 
 ## 버그
 
-- [ ] 
+- [x] 
   - 끝에 달했을 때 화면이 늘어나면 player가 안늘어남
   - maxVideo가 늘어났을 때 st+maxVideo top에 닿아있는 상태임.
   - 그러면 maxVideo가 늘어났을 때 st+mavVideo가 .length>면, st + st+maxVideo - length하면 되려나
