@@ -20,36 +20,37 @@ function App() {
     playerToDist: { randomString: 1 },
   });
   const [cameraViewNumber, setCameraViewNumber] = useState(5);
-  const [cameraViewVerticalNumber, setCameraVerticalViewNumber] = useState(5);
+  const [cameraVerticalViewNumber, setCameraVerticalViewNumber] = useState(5);
   const [isFullScreen, setIsFullScreen] = useState(false);
   useEffect(() => {
-    if (isFullScreen) {
-    } else {
-      let newActivePlayer = { playerToDist: {} };
-      let allPlayersLength = Object.keys(allPlayer.playerToDist).length; //TODO: Rename it
+    let cvn = isFullScreen ? cameraVerticalViewNumber : cameraViewNumber;
+    let newActivePlayer = { playerToDist: {} };
+    let allPlayersLength = Object.keys(allPlayer.playerToDist).length; //TODO: Rename it
 
-      let st = getBottomIndex(
-        activeIndex.start,
-        cameraViewNumber,
-        allPlayersLength
-      );
-      let en = st + cameraViewNumber;
+    let st = getBottomIndex(activeIndex.start, cvn, allPlayersLength);
+    let en = st + cvn;
 
-      Object.keys(allPlayer.playerToDist)
-        .slice(st, en)
-        .forEach((playerId) => {
-          newActivePlayer.playerToDist[playerId] =
-            allPlayer.playerToDist[playerId];
-        });
-      let newIsOver = cameraViewNumber < allPlayersLength;
-      setIsOver(newIsOver);
-      setActivePlayer(newActivePlayer);
-    }
-  }, [allPlayer, cameraViewNumber, activeIndex, isFullScreen]);
+    Object.keys(allPlayer.playerToDist)
+      .slice(st, en)
+      .forEach((playerId) => {
+        newActivePlayer.playerToDist[playerId] =
+          allPlayer.playerToDist[playerId];
+      });
+    let newIsOver = cvn < allPlayersLength;
+    setIsOver(newIsOver);
+    setActivePlayer(newActivePlayer);
+  }, [
+    allPlayer,
+    cameraVerticalViewNumber,
+    cameraViewNumber,
+    activeIndex,
+    isFullScreen,
+  ]);
 
   const addActiveIndex = () => {
     // top을 넘어가면 안됨
-    let top = Object.keys(allPlayer.playerToDist).length - cameraViewNumber;
+    let cvn = isFullScreen ? cameraVerticalViewNumber : cameraViewNumber;
+    let top = Object.keys(allPlayer.playerToDist).length - cvn;
     setActiveIndex((prev) => ({
       ...prev,
       start: prev.start < top ? prev.start + 1 : prev.start,
@@ -116,13 +117,23 @@ function App() {
           {/* For debugging ====== end ====== */}
         </div>
       </div>
-      <GameVideoVerticalContainer
-        activePlayer={activePlayer}
-        isOver={isOver}
-        addActiveIndex={addActiveIndex}
-        subActiveIndex={subActiveIndex}
-        cameraViewNumber={cameraViewNumber}
-      />
+      {isFullScreen ? (
+        <GameVideoVerticalContainer
+          activePlayer={activePlayer}
+          isOver={isOver}
+          addActiveIndex={addActiveIndex}
+          subActiveIndex={subActiveIndex}
+          cameraVerticalViewNumber={cameraVerticalViewNumber}
+        />
+      ) : (
+        <GameVideoContainer
+          activePlayer={activePlayer}
+          isOver={isOver}
+          addActiveIndex={addActiveIndex}
+          subActiveIndex={subActiveIndex}
+          cameraViewNumber={cameraViewNumber}
+        />
+      )}
     </div>
   );
 }

@@ -26,7 +26,7 @@ function GameVideoContainer({
 
 function GameVideoVerticalContainer({
   activePlayer,
-  cameraViewNumber,
+  cameraVerticalViewNumber,
   isOver,
   addActiveIndex,
   subActiveIndex,
@@ -38,13 +38,18 @@ function GameVideoVerticalContainer({
         isOver={isOver}
         addActiveIndex={addActiveIndex}
         subActiveIndex={subActiveIndex}
-        cameraViewNumber={cameraViewNumber}
+        cameraVerticalViewNumber={cameraVerticalViewNumber}
       />
     </>
   );
 }
 
-function OtherVideoVerticalContainer({ activePlayer }) {
+function OtherVideoVerticalContainer({
+  activePlayer,
+  subActiveIndex,
+  addActiveIndex,
+  cameraVerticalViewNumber,
+}) {
   let activePlayerList = Object.keys(activePlayer.playerToDist);
   return (
     <div
@@ -72,7 +77,7 @@ function OtherVideoVerticalContainer({ activePlayer }) {
         </div>
       </div>
 
-      <CarouselUp />
+      <CarouselUp onClick={subActiveIndex} />
 
       <div
         className="vertical-other-video-wrapper"
@@ -80,6 +85,7 @@ function OtherVideoVerticalContainer({ activePlayer }) {
       >
         {activePlayerList.map((playerId, idx) => (
           <div
+            key={playerId}
             className="VideoBoxWrapper"
             style={{
               width: "180px",
@@ -93,7 +99,7 @@ function OtherVideoVerticalContainer({ activePlayer }) {
           </div>
         ))}
       </div>
-      <CarouselDown />
+      <CarouselDown onClick={addActiveIndex} />
     </div>
   );
 }
