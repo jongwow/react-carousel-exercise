@@ -30,7 +30,19 @@ export const CarouselUp = (props) => (
       width: "32px",
       height: "32px",
       backgroundColor: "green",
-      marginTop: 32,
+      margin: "0 auto",
+    }}
+    {...props}
+  ></div>
+);
+
+export const CarouselDown = (props) => (
+  <div
+    style={{
+      width: "32px",
+      height: "32px",
+      backgroundColor: "green",
+      margin: "0 auto",
     }}
     {...props}
   ></div>

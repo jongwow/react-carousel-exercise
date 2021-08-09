@@ -9,6 +9,7 @@ import {
 
 function App() {
   const innerWidth = useRef(0);
+  const innerHeight = useRef(0);
 
   const [allPlayer, setAllPlayer] = useState({
     playerToDist: { randomString: 1 },
@@ -19,28 +20,32 @@ function App() {
     playerToDist: { randomString: 1 },
   });
   const [cameraViewNumber, setCameraViewNumber] = useState(5);
-
+  const [cameraViewVerticalNumber, setCameraVerticalViewNumber] = useState(5);
+  const [isFullScreen, setIsFullScreen] = useState(false);
   useEffect(() => {
-    let newActivePlayer = { playerToDist: {} };
-    let allPlayersLength = Object.keys(allPlayer.playerToDist).length; //TODO: Rename it
+    if (isFullScreen) {
+    } else {
+      let newActivePlayer = { playerToDist: {} };
+      let allPlayersLength = Object.keys(allPlayer.playerToDist).length; //TODO: Rename it
 
-    let st = getBottomIndex(
-      activeIndex.start,
-      cameraViewNumber,
-      allPlayersLength
-    );
-    let en = st + cameraViewNumber;
+      let st = getBottomIndex(
+        activeIndex.start,
+        cameraViewNumber,
+        allPlayersLength
+      );
+      let en = st + cameraViewNumber;
 
-    Object.keys(allPlayer.playerToDist)
-      .slice(st, en)
-      .forEach((playerId) => {
-        newActivePlayer.playerToDist[playerId] =
-          allPlayer.playerToDist[playerId];
-      });
-    let newIsOver = cameraViewNumber < allPlayersLength;
-    setIsOver(newIsOver);
-    setActivePlayer(newActivePlayer);
-  }, [allPlayer, cameraViewNumber, activeIndex]);
+      Object.keys(allPlayer.playerToDist)
+        .slice(st, en)
+        .forEach((playerId) => {
+          newActivePlayer.playerToDist[playerId] =
+            allPlayer.playerToDist[playerId];
+        });
+      let newIsOver = cameraViewNumber < allPlayersLength;
+      setIsOver(newIsOver);
+      setActivePlayer(newActivePlayer);
+    }
+  }, [allPlayer, cameraViewNumber, activeIndex, isFullScreen]);
 
   const addActiveIndex = () => {
     // top을 넘어가면 안됨
@@ -62,10 +67,15 @@ function App() {
   useEffect(() => {
     let dd = throttle(() => {
       innerWidth.current = window.innerWidth - 390;
+      innerHeight.current = window.innerHeight - 136;
+      let currentCameraVerticalViewNumber = getCameraVerticalViewNumber(
+        innerHeight.current
+      );
+      setCameraVerticalViewNumber(currentCameraVerticalViewNumber);
       let currentCameraViewNumber = getCameraViewNumber(innerWidth.current);
       setCameraViewNumber(currentCameraViewNumber);
       console.log(
-        `브라우저 화면 사이즈 x: ${window.innerWidth}, y: ${window.innerHeight}. InnerWidth: ${innerWidth.current}, CameraView: ${currentCameraViewNumber}`
+        `브라우저 화면 사이즈 x: ${window.innerWidth}, y: ${window.innerHeight}. InnerWidth: ${innerWidth.current}, CameraView: ${currentCameraViewNumber}, InnerHeight:${innerHeight.current}, CameraVertical: ${currentCameraVerticalViewNumber}`
       );
     }, 300);
     window.addEventListener("resize", dd);
@@ -86,7 +96,12 @@ function App() {
         }}
       >
         {/* <LeftColumn /> */}
-        <RightColumn setAllPlayer={setAllPlayer} allPlayer={allPlayer} />
+        <RightColumn
+          setAllPlayer={setAllPlayer}
+          allPlayer={allPlayer}
+          setIsFullScreen={setIsFullScreen}
+          isFullScreen={isFullScreen}
+        />
         <div style={{ marginLeft: "230px" }}>
           {/* For debugging ====== start ====== */}
           {Object.keys(allPlayer.playerToDist).map((playerId) => (
@@ -152,6 +167,34 @@ function getCameraViewNumber(containerWidth) {
     return 2;
   }
   return 1;
+}
+
+/**
+ * 현재 cameraContainerHeight를 이용해서 최대 보여질 수 있는 영상 개수를 반환
+ *
+ * @param {number} containerHeight 카메라 영역 높이. 가변
+ * @returns {number} cameraVerticalViewNumber 보이는 최대 영상 숫자.
+ */
+function getCameraVerticalViewNumber(containerHeight) {
+  if (containerHeight >= 1204) {
+    return 8;
+  }
+  if (containerHeight >= 1068) {
+    return 7;
+  }
+  if (containerHeight >= 932) {
+    return 6;
+  }
+  if (containerHeight >= 796) {
+    return 5;
+  }
+  if (containerHeight >= 660) {
+    return 4;
+  }
+  if (containerHeight >= 524) {
+    return 3;
+  }
+  return 2;
 }
 
 function getBottomIndex(start, width, top) {

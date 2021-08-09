@@ -1,4 +1,4 @@
-import { CarouselLeft, CarouselUp } from "./carousel";
+import { CarouselDown, CarouselLeft, CarouselUp } from "./carousel";
 import MyVideoContainer from "./MyVideoContainer";
 import OtherVideoContainer from "./OtherVideoContainer";
 import VideoBox from "./VideoBox";
@@ -44,7 +44,8 @@ function GameVideoVerticalContainer({
   );
 }
 
-function OtherVideoVerticalContainer() {
+function OtherVideoVerticalContainer({ activePlayer }) {
+  let activePlayerList = Object.keys(activePlayer.playerToDist);
   return (
     <div
       style={{
@@ -55,6 +56,7 @@ function OtherVideoVerticalContainer() {
         top: "0px",
         backgroundColor: "#3A3A3C",
         borderRadius: "0px",
+        overflowY: "hidden",
       }}
     >
       <div className="vertical-my-video" style={{ margin: "0 auto" }}>
@@ -76,37 +78,22 @@ function OtherVideoVerticalContainer() {
         className="vertical-other-video-wrapper"
         style={{ margin: "0 auto" }}
       >
-        <div
-          className="VideoBoxWrapper"
-          style={{
-            width: "180px",
-            height: "120px",
-            margin: "16px auto",
-          }}
-        >
-          <VideoBox text={`playerId: Dist`} />
-        </div>
-        <div
-          className="VideoBoxWrapper"
-          style={{
-            width: "180px",
-            height: "120px",
-            margin: "16px auto",
-          }}
-        >
-          <VideoBox text={`playerId: Dist`} />
-        </div>
-        <div
-          className="VideoBoxWrapper"
-          style={{
-            width: "180px",
-            height: "120px",
-            margin: "16px auto",
-          }}
-        >
-          <VideoBox text={`playerId: Dist`} />
-        </div>
+        {activePlayerList.map((playerId, idx) => (
+          <div
+            className="VideoBoxWrapper"
+            style={{
+              width: "180px",
+              height: "120px",
+              margin: "16px auto",
+            }}
+          >
+            <VideoBox
+              text={`${playerId}:${activePlayer.playerToDist[playerId]}`}
+            />
+          </div>
+        ))}
       </div>
+      <CarouselDown />
     </div>
   );
 }
