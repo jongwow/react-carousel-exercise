@@ -66,6 +66,15 @@ function App() {
   };
 
   useEffect(() => {
+    innerWidth.current = window.innerWidth - 390;
+    innerHeight.current = window.innerHeight - 136;
+    let currentCameraVerticalViewNumber = getCameraVerticalViewNumber(
+      innerHeight.current
+    );
+    setCameraVerticalViewNumber(currentCameraVerticalViewNumber);
+    let currentCameraViewNumber = getCameraViewNumber(innerWidth.current);
+    setCameraViewNumber(currentCameraViewNumber);
+
     let dd = throttle(() => {
       innerWidth.current = window.innerWidth - 390;
       innerHeight.current = window.innerHeight - 136;
