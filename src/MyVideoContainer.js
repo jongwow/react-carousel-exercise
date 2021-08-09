@@ -1,25 +1,25 @@
 import VideoBox from "./VideoBox";
 
 function MyVideoContainer() {
-    return (
+  return (
+    <div
+      id="my-video"
+      style={{
+        position: `absolute`,
+        left: `40px`,
+        bottom: `40px`,
+      }}
+    >
       <div
-        id="my-video"
         style={{
-          position: `absolute`,
-          left: `40px`,
-          bottom: `40px`,
+          height: `100%`,
+          backgroundColor: "pink",
         }}
       >
-        <div
-          style={{
-            height: `100%`,
-            backgroundColor: "pink",
-          }}
-        >
-          <VideoBox text={"myVideo"} />
-        </div>
+        <VideoBox text={"myVideo"} playerId={"myVideo"} />
       </div>
-    );
-  }
+    </div>
+  );
+}
 
-  export default MyVideoContainer;
+export default MyVideoContainer;

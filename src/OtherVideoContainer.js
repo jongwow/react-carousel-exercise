@@ -41,6 +41,7 @@ function OtherVideoContainer(props) {
             }}
           >
             <VideoBox
+              playerId={playerId}
               text={`${playerId}:${activePlayer.playerToDist[playerId]}`}
               style={
                 idx !== activePlayerList.length - 1

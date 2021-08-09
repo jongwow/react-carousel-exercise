@@ -94,6 +94,7 @@ function OtherVideoVerticalContainer({
             }}
           >
             <VideoBox
+              playerId={playerId}
               text={`${playerId}:${activePlayer.playerToDist[playerId]}`}
             />
           </div>
