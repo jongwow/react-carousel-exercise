@@ -13,6 +13,7 @@ function OtherVideoContainer(props) {
     isOver,
     addActiveIndex,
     subActiveIndex,
+    setIsFullScreen,
   } = props;
   let activePlayerList = Object.keys(activePlayer.playerToDist);
   return (
@@ -46,6 +47,7 @@ function OtherVideoContainer(props) {
             }}
           >
             <VideoBox
+              setIsFullScreen={setIsFullScreen}
               playerId={playerId}
               text={`${playerId}:${activePlayer.playerToDist[playerId]}`}
               style={
@@ -66,6 +68,7 @@ function OtherVideoVerticalContainer({
   activePlayer,
   subActiveIndex,
   addActiveIndex,
+  setIsFullScreen,
   cameraVerticalViewNumber,
 }) {
   let activePlayerList = Object.keys(activePlayer.playerToDist);
@@ -73,6 +76,7 @@ function OtherVideoVerticalContainer({
     <div
       style={{
         position: "absolute",
+        zIndex: 3,
         height: "100%",
         width: "212px",
         left: "0px",
@@ -112,6 +116,7 @@ function OtherVideoVerticalContainer({
             }}
           >
             <VideoBox
+              setIsFullScreen={setIsFullScreen}
               playerId={playerId}
               text={`${playerId}:${activePlayer.playerToDist[playerId]}`}
             />

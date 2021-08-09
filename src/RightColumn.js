@@ -3,8 +3,8 @@ import { randomString } from "./randomId";
 
 export default function RightColumn({
   setAllPlayer,
-  setIsFullScreen,
   isFullScreen,
+  setIsFullScreen,
 }) {
   const latestId = useRef(["randomString1"]);
   const onClickCreate = () => {
@@ -25,8 +25,8 @@ export default function RightColumn({
       return newPlayers;
     });
   };
-  const onClickFull = () => {
-    setIsFullScreen((prev) => !prev);
+  const onClickReleaseFullScreen = () => {
+    setIsFullScreen(null);
   };
 
   return (
@@ -47,7 +47,7 @@ export default function RightColumn({
       <button onClick={onClickCreate}>createPlayer</button>
       <button onClick={onClickRemove}>removePlayer</button>
       <button
-        onClick={onClickFull}
+        onClick={onClickReleaseFullScreen}
         style={{
           backgroundColor: isFullScreen ? "red" : "blue",
           color: isFullScreen ? "black" : "white",

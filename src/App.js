@@ -21,7 +21,7 @@ function App() {
   });
   const [cameraViewNumber, setCameraViewNumber] = useState(5);
   const [cameraVerticalViewNumber, setCameraVerticalViewNumber] = useState(5);
-  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(null);
   useEffect(() => {
     let cvn = isFullScreen ? cameraVerticalViewNumber : cameraViewNumber;
     let newActivePlayer = { playerToDist: {} };
@@ -109,8 +109,8 @@ function App() {
         <RightColumn
           setAllPlayer={setAllPlayer}
           allPlayer={allPlayer}
-          setIsFullScreen={setIsFullScreen}
           isFullScreen={isFullScreen}
+          setIsFullScreen={setIsFullScreen}
         />
         <div style={{ marginLeft: "230px" }}>
           {/* For debugging ====== start ====== */}
@@ -132,6 +132,8 @@ function App() {
           isOver={isOver}
           addActiveIndex={addActiveIndex}
           subActiveIndex={subActiveIndex}
+          setIsFullScreen={setIsFullScreen}
+          isFullScreen={isFullScreen}
           cameraVerticalViewNumber={cameraVerticalViewNumber}
         />
       ) : (
@@ -140,6 +142,7 @@ function App() {
           isOver={isOver}
           addActiveIndex={addActiveIndex}
           subActiveIndex={subActiveIndex}
+          setIsFullScreen={setIsFullScreen}
           cameraViewNumber={cameraViewNumber}
         />
       )}

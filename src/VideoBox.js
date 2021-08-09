@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { randomColor } from "./randomId";
 
-function VideoBox({ text, style, playerId }) {
+function VideoBox({ text, style, playerId, setIsFullScreen }) {
   const [showMenu, setShowMenu] = useState(false);
   let color = randomColor(text[0]);
   return (
@@ -26,12 +26,14 @@ function VideoBox({ text, style, playerId }) {
         video
       </div>
 
-      {showMenu && <GameVideoMenu playerId={playerId} />}
+      {showMenu && (
+        <GameVideoMenu playerId={playerId} setIsFullScreen={setIsFullScreen} />
+      )}
       <GameVideoName name={text} />
     </div>
   );
 }
-function GameVideoMenu({ playerId }) {
+function GameVideoMenu({ playerId, setIsFullScreen }) {
   return (
     <div
       style={{
@@ -49,7 +51,7 @@ function GameVideoMenu({ playerId }) {
       <div style={{ marginRight: "12px" }}>{videoOn}</div>
       <div
         onClick={() => {
-          alert(playerId);
+          setIsFullScreen(playerId);
         }}
       >
         {fullScreen}
