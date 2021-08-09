@@ -47,7 +47,13 @@ function GameVideoMenu() {
     >
       <div style={{ marginRight: "12px" }}>{micOn}</div>
       <div style={{ marginRight: "12px" }}>{videoOn}</div>
-      <div>{fullScreen}</div>
+      <div
+        onClick={() => {
+          alert("Hello Mr Park");
+        }}
+      >
+        {fullScreen}
+      </div>
     </div>
   );
 }
@@ -99,3 +105,16 @@ const fullScreen = (
     src={require("./images/v1/full.png").default}
   />
 );
+/**
+ * 
+flex: 1;
+padding: 20px 32px;
+padding-bottom: 48px;
+overflow-y: auto;
+
+
+  display: flex;
+  align-items: center;
+  padding-top: 12px;
+  padding-bottom: 12px;
+ */

@@ -2,7 +2,10 @@ import "./App.css";
 import RightColumn from "./RightColumn";
 import LeftColumn from "./LeftColumn";
 import { useEffect, useRef, useState } from "react";
-import GameVideoContainer from "./GameVideoContainer";
+import {
+  GameVideoContainer,
+  GameVideoVerticalContainer,
+} from "./GameVideoContainer";
 
 function App() {
   const innerWidth = useRef(0);
@@ -82,22 +85,23 @@ function App() {
           backgroundColor: "#eeeeee",
         }}
       >
-        <LeftColumn />
+        {/* <LeftColumn /> */}
         <RightColumn setAllPlayer={setAllPlayer} allPlayer={allPlayer} />
-
-        {/* For debugging ====== start ====== */}
-        {Object.keys(allPlayer.playerToDist).map((playerId) => (
-          <span key={playerId}>[{playerId}]</span>
-        ))}
-        <br />
-        {Object.keys(activePlayer.playerToDist).map((playerId) => (
-          <span key={`act-${playerId}`}>[{playerId}]</span>
-        ))}
-        <br />
-        <span>{JSON.stringify(activeIndex)}</span>
-        {/* For debugging ====== end ====== */}
+        <div style={{ marginLeft: "230px" }}>
+          {/* For debugging ====== start ====== */}
+          {Object.keys(allPlayer.playerToDist).map((playerId) => (
+            <span key={playerId}>[{playerId}]</span>
+          ))}
+          <br />
+          {Object.keys(activePlayer.playerToDist).map((playerId) => (
+            <span key={`act-${playerId}`}>[{playerId}]</span>
+          ))}
+          <br />
+          <span>{JSON.stringify(activeIndex)}</span>
+          {/* For debugging ====== end ====== */}
+        </div>
       </div>
-      <GameVideoContainer
+      <GameVideoVerticalContainer
         activePlayer={activePlayer}
         isOver={isOver}
         addActiveIndex={addActiveIndex}
